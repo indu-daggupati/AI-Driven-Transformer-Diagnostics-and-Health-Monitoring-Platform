@@ -10,7 +10,7 @@ A modern web application for predictive transformer fault detection using AI ana
 - Responsive design for mobile and desktop
 
 ## Demo
-Visit the live application: [AI Transformer Diagnostics](https://your-username.github.io/ai-transformer-diagnostics)
+Visit the live application: [AI Transformer Diagnostics](https://indu-daggupati.github.io/ai-transformer-diagnostics)
 
 ## Usage
 1. Login with any username/password
