@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Transformer Diagnostics</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <i class="fas fa-bolt"></i>
+                    <h1>Transformer Diagnostics</h1>
+                    <p>AI-Powered Analysis System</p>
+                </div>
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="page">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-bolt"></i>
+                <span>Transformer Diagnostics</span>
+            </div>
+            <div class="nav-menu">
+                <button class="nav-btn active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+                <button class="nav-btn" data-page="upload">
+                    <i class="fas fa-upload"></i> Data Upload
+                </button>
+                <button class="nav-btn" data-page="analysis">
+                    <i class="fas fa-brain"></i> AI Analysis
+                </button>
+                <button class="nav-btn" data-page="visualization">
+                    <i class="fas fa-chart-line"></i> Visualization
+                </button>
+                <button class="nav-btn" data-page="reports">
+                    <i class="fas fa-file-alt"></i> Reports
+                </button>
+            </div>
+            <div class="nav-user">
+                <span id="userDisplay">Engineer</span>
+                <button id="logoutBtn" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Notification Panel -->
+        <div id="notificationPanel" class="notification-panel">
+            <div class="notification-header">
+                <h3><i class="fas fa-bell"></i> Notifications</h3>
+                <button id="closeNotifications" class="close-btn">&times;</button>
+            </div>
+            <div id="notificationList" class="notification-list">
+                <!-- Notifications will be populated here -->
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboardPage" class="content-page active">
+            <div class="page-header">
+                <h2>Dashboard</h2>
+                <div class="header-actions">
+                    <button id="notificationBtn" class="btn btn-outline">
+                        <i class="fas fa-bell"></i>
+                        <span id="notificationCount" class="notification-badge">0</span>
+                    </button>
+                    <button id="refreshBtn" class="btn btn-outline">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon healthy">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="healthyCount">0</h3>
+                        <p>Healthy Transformers</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="warningCount">0</h3>
+                        <p>Warning Status</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon fault">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="faultCount">0</h3>
+                        <p>Fault Detected</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalCount">0</h3>
+                        <p>Total Transformers</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="transformer-grid">
+                <h3>Transformer Status</h3>
+                <div id="transformerList" class="transformer-list">
+                    <!-- Transformer cards will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Upload Page -->
+        <div id="uploadPage" class="content-page">
+            <div class="page-header">
+                <h2>Data Upload & Auto-Feed</h2>
+            </div>
+
+            <div class="upload-section">
+                <div class="upload-card">
+                    <h3><i class="fas fa-upload"></i> Upload FRA Files</h3>
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drop files here or click to browse</p>
+                        <p class="upload-info">Supported formats: .csv, .txt, .xml</p>
+                        <input type="file" id="fileInput" multiple accept=".csv,.txt,.xml" hidden>
+                    </div>
+                    <div id="fileList" class="file-list"></div>
+                    <button id="processFiles" class="btn btn-primary" disabled>Process Files</button>
+                </div>
+
+                <div class="auto-feed-card">
+                    <h3><i class="fas fa-satellite-dish"></i> Auto Data Feed</h3>
+                    <div class="feed-status">
+                        <div class="status-indicator" id="feedStatus">
+                            <span class="status-dot offline"></span>
+                            <span>Offline</span>
+                        </div>
+                        <button id="simulateFeed" class="btn btn-secondary">Simulate Data Feed</button>
+                    </div>
+                    <div class="feed-log" id="feedLog">
+                        <h4>Feed Log</h4>
+                        <div class="log-content">
+                            <p>No recent activity</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Analysis Page -->
+        <div id="analysisPage" class="content-page">
+            <div class="page-header">
+                <h2>AI Analysis</h2>
+            </div>
+
+            <div class="analysis-section">
+                <div class="analysis-controls">
+                    <select id="transformerSelect" class="form-select">
+                        <option value="">Select Transformer</option>
+                    </select>
+                    <button id="runAnalysis" class="btn btn-primary">Run Analysis</button>
+                </div>
+
+                <div id="analysisResults" class="analysis-results">
+                    <div class="result-card">
+                        <h3><i class="fas fa-search"></i> Fault Classification</h3>
+                        <div id="faultClassification" class="classification-content">
+                            <p>No analysis performed yet</p>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Severity Assessment</h3>
+                        <div id="severityAssessment" class="severity-content">
+                            <p>No analysis performed yet</p>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3><i class="fas fa-lightbulb"></i> Recommendations</h3>
+                        <div id="recommendations" class="recommendations-content">
+                            <p>No recommendations available</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualization Page -->
+        <div id="visualizationPage" class="content-page">
+            <div class="page-header">
+                <h2>FRA Visualization</h2>
+            </div>
+
+            <div class="visualization-section">
+                <div class="chart-controls">
+                    <select id="chartTransformerSelect" class="form-select">
+                        <option value="">Select Transformer</option>
+                    </select>
+                    <div class="chart-options">
+                        <label>
+                            <input type="checkbox" id="showHealthy" checked> Show Healthy Response
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showCurrent" checked> Show Current Response
+                        </label>
+                        <label>
+                            <input type="checkbox" id="highlightAnomalies" checked> Highlight Anomalies
+                        </label>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="fraChart"></canvas>
+                </div>
+
+                <div class="chart-info">
+                    <div class="info-card">
+                        <h4>Analysis Summary</h4>
+                        <div id="chartSummary">
+                            <p>Select a transformer to view FRA analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reportsPage" class="content-page">
+            <div class="page-header">
+                <h2>Reports</h2>
+            </div>
+
+            <div class="reports-section">
+                <div class="report-generator">
+                    <h3>Generate Report</h3>
+                    <div class="report-form">
+                        <div class="form-group">
+                            <label for="reportTransformer">Transformer</label>
+                            <select id="reportTransformer" class="form-select">
+                                <option value="">Select Transformer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportType">Report Type</label>
+                            <select id="reportType" class="form-select">
+                                <option value="detailed">Detailed Analysis Report</option>
+                                <option value="summary">Summary Report</option>
+                                <option value="maintenance">Maintenance Report</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportFormat">Format</label>
+                            <select id="reportFormat" class="form-select">
+                                <option value="pdf">PDF</option>
+                                <option value="excel">Excel</option>
+                            </select>
+                        </div>
+                        <div class="report-actions">
+                            <button id="generateReport" class="btn btn-primary">Generate Report</button>
+                            <button id="previewReport" class="btn btn-secondary">Preview</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-reports">
+                    <h3>Recent Reports</h3>
+                    <div id="reportHistory" class="report-list">
+                        <p>No reports generated yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="alertTitle">Alert</h3>
+                <button class="close-btn" onclick="closeAlert()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="alertIcon" class="alert-icon"></div>
+                <div id="alertMessage" class="alert-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeAlert()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
